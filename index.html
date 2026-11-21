@@ -45,10 +45,9 @@ button{font:inherit;cursor:pointer;border:0;color:#fff}
 .rise p,.rise .from,.rise .lt-h{opacity:0;animation:rise .9s ease forwards;animation-delay:var(--d,0s)}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .glass{background:rgba(20,8,38,.55);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px}
-.player{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:10;display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:13px;border-radius:999px}
+.player{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:10;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 12px;font-size:13px;border-radius:999px}
 .player button{background:rgba(255,255,255,.14);border-radius:50%;width:36px;height:36px;font-size:15px}
 .player button:hover{background:rgba(255,255,255,.28)}
-.player .up{border-radius:999px;width:auto;padding:0 12px;font-size:12px}
 .player input[type=range]{width:64px;accent-color:#ff5c9a}
 #trk{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
 :focus-visible{outline:2px solid #ffd6e7;outline-offset:3px}
@@ -83,9 +82,7 @@ button{font:inherit;cursor:pointer;border:0;color:#fff}
   <button id="pp" title="Reproducir / pausar" aria-label="Reproducir o pausar">▶</button>
   <span id="trk">Mantecado de coco</span>
   <input type="range" id="vol" min="0" max="1" step=".01" value=".6" aria-label="Volumen">
-  <button class="up" id="upBtn" title="Subir tu propio MP3">♪ Subir MP3</button>
 </div>
-<input type="file" id="file" accept="audio/*" hidden>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -206,10 +203,6 @@ function pause(){aud.pause();playing=false;setUI()}
 $('#pp').onclick=()=>playing?pause():play();
 $('#vol').oninput=e=>{aud.volume=+e.target.value};
 addEventListener('pointerdown',e=>{if(touched||e.target.closest('.player'))return;play()});
-const fi=$('#file');
-$('#upBtn').onclick=()=>fi.click();
-fi.onchange=()=>{const fl=fi.files[0];if(!fl)return;
-  aud.src=URL.createObjectURL(fl);$('#trk').textContent=fl.name;$('#trk').title=fl.name;play()};
 </script>
 </body>
 </html>
