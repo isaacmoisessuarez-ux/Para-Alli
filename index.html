@@ -46,19 +46,11 @@ button{font:inherit;cursor:pointer;border:0;color:#fff}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .glass{background:rgba(20,8,38,.55);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:18px}
 .player{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:10;display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:13px;border-radius:999px}
-.player button,.gear{background:rgba(255,255,255,.14);border-radius:50%;width:36px;height:36px;font-size:15px}
-.player button:hover,.gear:hover{background:rgba(255,255,255,.28)}
+.player button{background:rgba(255,255,255,.14);border-radius:50%;width:36px;height:36px;font-size:15px}
+.player button:hover{background:rgba(255,255,255,.28)}
 .player .up{border-radius:999px;width:auto;padding:0 12px;font-size:12px}
 .player input[type=range]{width:64px;accent-color:#ff5c9a}
-#trk{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
-.gear{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:10;width:42px;height:42px;font-size:19px;background:rgba(20,8,38,.55);border:1px solid rgba(255,255,255,.22)}
-.panel{position:fixed;top:calc(64px + env(safe-area-inset-top,0px));right:14px;z-index:10;width:min(92vw,340px);max-height:calc(100% - 90px);overflow:auto;padding:18px;display:grid;gap:10px}
-.panel label{font-size:13px;color:#ffc9dc}
-.panel input[type=text],.panel textarea{width:100%;padding:10px 12px;margin-top:4px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:14px}
-.panel textarea{min-height:130px;resize:vertical}
-.panel .row{display:flex;gap:8px;flex-wrap:wrap}
-.panel button{padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.15);font-size:13px}
-.panel button:hover{background:rgba(255,92,154,.5)}
+#trk{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.85}
 :focus-visible{outline:2px solid #ffd6e7;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.card,.beat,#yes{animation:none}}
 </style>
@@ -73,7 +65,7 @@ button{font:inherit;cursor:pointer;border:0;color:#fff}
       <h1 id="nm"></h1>
       <p class="ask" id="q"></p>
       <div class="btns">
-        <span id="yesWrap"><button id="yes">Sí </button></span>
+        <span id="yesWrap"><button id="yes">Sí 💕</button></span>
         <span id="noWrap"><button id="no">No</button></span>
       </div>
     </section>
@@ -89,29 +81,16 @@ button{font:inherit;cursor:pointer;border:0;color:#fff}
 
 <div class="player glass">
   <button id="pp" title="Reproducir / pausar" aria-label="Reproducir o pausar">▶</button>
-  <span id="trk">Mantacado de coco</span>
+  <span id="trk">Mantecado de coco</span>
   <input type="range" id="vol" min="0" max="1" step=".01" value=".6" aria-label="Volumen">
   <button class="up" id="upBtn" title="Subir tu propio MP3">♪ Subir MP3</button>
 </div>
 <input type="file" id="file" accept="audio/*" hidden>
 
-<button class="gear" id="gear" aria-label="Ajustes">⚙️</button>
-<div class="panel glass" id="panel" hidden>
-  <label>Nombre de ella/él<input type="text" id="iName"></label>
-  <label>Pregunta<input type="text" id="iQ"></label>
-  <label>Tu firma<input type="text" id="iFrom"></label>
-  <label>Carta de amor (usa {nombre} para insertar el nombre)<textarea id="iLetter"></textarea></label>
-  <div class="row">
-    <button id="aBtn">Elegir audio</button>
-    <button id="aReset">Mantecado de coco</button>
-    <button id="rst">↺ Reiniciar vista</button>
-  </div>
-</div>
-
 <script>
 const $=s=>document.querySelector(s);
-/* ---------- Datos personalizables ---------- */
-const D={name:'Allis',q:'¿Quieres volver conmigo?',from:'Isuchiemo',
+/* ---------- Textos (edita aquí) ---------- */
+const S={name:'Allis',q:'¿Quieres volver conmigo?',from:'Isuchiemo',
 letter:`Si pusiste que si gracias mi toda Allisson
 
 Gracias por haber dicho que si, te extrañe mucho, extrañaba las caricias que me hacias en el cabello y tambien decirte mi amor, obviamente tambien decirte lo mucho que te amo
@@ -119,9 +98,6 @@ y te hice esto por que tal vez no nos veamos hasta quien sabe cuando
 te amo mucho mi linda
 
 Eres mi amorcito ♥`};
-let S={...D};
-try{Object.assign(S,JSON.parse(localStorage.getItem('loveCfg')||'{}'))}catch(e){}
-function save(){try{localStorage.setItem('loveCfg',JSON.stringify(S))}catch(e){}}
 function renderQ(){$('#nm').textContent=S.name+',';$('#q').textContent=S.q}
 function renderL(anim){
   $('#ltH').textContent='Para ti, '+S.name;
@@ -133,13 +109,7 @@ function renderL(anim){
   if(anim){$('#ltH').style.setProperty('--d','.1s');$('#ltF').style.setProperty('--d',(.6+n*.7)+'s')}
   $('#lv').classList.toggle('rise',!!anim);
 }
-function bindIn(id,key,cb){const el=$(id);el.value=S[key];el.addEventListener('input',()=>{S[key]=el.value;save();cb()})}
-bindIn('#iName','name',()=>{renderQ();renderL(false)});
-bindIn('#iQ','q',renderQ);
-bindIn('#iFrom','from',()=>renderL(false));
-bindIn('#iLetter','letter',()=>renderL(false));
 renderQ();renderL(false);
-$('#gear').onclick=()=>$('#panel').hidden=!$('#panel').hidden;
 
 /* ---------- Canvas: estrellas, luz cálida y corazones ---------- */
 const bg=$('#bg'),fx=$('#fx'),b=bg.getContext('2d'),f=fx.getContext('2d');
@@ -155,7 +125,7 @@ function addHeart(x,y,burst){hearts.push({x:x??Math.random()*W,y:y??H+30,s:burst
   vy:burst?-(60+Math.random()*90):-(18+Math.random()*34),vx:burst?(Math.random()-.5)*90:0,p:Math.random()*6.28,
   a:burst?.8:.18+Math.random()*.3,c:hc[Math.random()*4|0],life:burst?1:0})}
 addEventListener('pointermove',e=>{tmx=e.clientX/W;tmy=e.clientY/H});
-addEventListener('pointerdown',e=>{if(e.target.closest('button,input,textarea,.panel'))return;for(let i=0;i<7;i++)addHeart(e.clientX,e.clientY,true)});
+addEventListener('pointerdown',e=>{if(e.target.closest('button,input'))return;for(let i=0;i<7;i++)addHeart(e.clientX,e.clientY,true)});
 const cols=['#ff4d8d','#ff1744','#ffd166','#ffffff','#ff9ecb','#c77dff'];
 function spawnConf(n){for(let i=0;i<n;i++)conf.push({x:Math.random()*W,y:-20-Math.random()*H*.4,vx:(Math.random()-.5)*140,vy:90+Math.random()*200,
   rx:Math.random()*6.28,vrx:3+Math.random()*7,rz:Math.random()*6.28,vrz:(Math.random()-.5)*7,w:7+Math.random()*9,h:11+Math.random()*10,
@@ -211,7 +181,7 @@ resetNo();
 
 /* ---------- Destellos del botón "Sí" ---------- */
 setInterval(()=>{if($('#qv').hidden)return;
-  const s=document.createElement('span'),r=yes.getBoundingClientRect(),w=$('#yesWrap').getBoundingClientRect();
+  const s=document.createElement('span'),r=yes.getBoundingClientRect();
   s.className='sp';s.textContent=['✦','♥','✧','❤','✨'][Math.random()*5|0];
   s.style.color=['#ff4d8d','#ff1744','#ff9ecb','#ffd1e1'][Math.random()*4|0];
   s.style.left=(Math.random()*r.width)+'px';s.style.top=(Math.random()*r.height)+'px';
@@ -226,46 +196,20 @@ yes.onclick=()=>{
   qv.classList.add('out');
   setTimeout(()=>{qv.hidden=true;lv.hidden=false;card.classList.add('letter');renderL(true);
     requestAnimationFrame(()=>requestAnimationFrame(()=>lv.classList.remove('out')))},650)};
-$('#rst').onclick=()=>{rainUntil=0;lv.classList.add('out');lv.hidden=true;card.classList.remove('letter');
-  qv.hidden=false;requestAnimationFrame(()=>qv.classList.remove('out'));resetNo()};
 
-/* ---------- Música: melodía generada con Web Audio + MP3 propio ---------- */
-let ac,master,tm,nextT=0,step=0,playing=false,custom=true,touched=false;
-const aud=new Audio("alvaro-diaz-mantecado-de-coco-official-video-1_iuSoS9VR.mp3");aud.loop=true;
-const mtof=m=>Math.pow(2,(m-69)/12)*440;
-const chords=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]];            // Am · F · C · G
-const mel=[[76,0,0,0,79,0,76,0],[77,0,0,0,76,0,72,0],[72,0,76,0,79,0,0,0],[79,0,77,0,76,0,74,0]];
-const STEP=.43,arp=[0,1,2,1,2,1,2,1];
-function note(fr,t,dur,vol,type){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=fr;
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-  o.connect(g);g.connect(master);g.connect(dly);o.start(t);o.stop(t+dur+.05)}
-let dly;
-function sched(){while(nextT<ac.currentTime+.35){
-  const bar=(step>>3)%4,i=step&7,c=chords[bar];
-  note(mtof(c[arp[i]]+12),nextT,1.2,.16,'triangle');
-  if(i===0){note(mtof(c[0]-12),nextT,STEP*8,.22,'sine');note(mtof(c[1]),nextT,STEP*8,.07,'sine');note(mtof(c[2]),nextT,STEP*8,.07,'sine')}
-  if(i===4)note(mtof(c[0]-12+7),nextT,1.4,.1,'sine');
-  const m=mel[bar][i];if(m)note(mtof(m),nextT,1.6,.2,'sine');
-  nextT+=STEP;step++}}
-function initAudio(){if(ac)return;ac=new(window.AudioContext||window.webkitAudioContext)();
-  master=ac.createGain();master.gain.value=$('#vol').value*.6;master.connect(ac.destination);
-  dly=ac.createDelay();dly.delayTime.value=.34;const fb=ac.createGain();fb.gain.value=.38;const lp=ac.createBiquadFilter();
-  lp.type='lowpass';lp.frequency.value=2200;dly.connect(lp);lp.connect(fb);fb.connect(dly);lp.connect(master)}
+/* ---------- Música: tu canción (MP3) ---------- */
+let playing=false,touched=false;
+const aud=new Audio("alvaro-diaz-mantecado-de-coco-official-video-1_iuSoS9VR.mp3");aud.loop=true;aud.volume=.6;
 function setUI(){$('#pp').textContent=playing?'⏸':'▶'}
-function play(){touched=true;
-  if(custom){aud.play().catch(()=>{})}
-  else{initAudio();ac.resume();nextT=ac.currentTime+.1;clearInterval(tm);tm=setInterval(sched,100)}
-  playing=true;setUI()}
-function pause(){if(custom)aud.pause();else{clearInterval(tm);if(ac)ac.suspend()}playing=false;setUI()}
+function play(){touched=true;aud.play().catch(()=>{});playing=true;setUI()}
+function pause(){aud.pause();playing=false;setUI()}
 $('#pp').onclick=()=>playing?pause():play();
-$('#vol').oninput=e=>{aud.volume=+e.target.value;if(master)master.gain.value=e.target.value*.6};
-aud.volume=.6;
-addEventListener('pointerdown',e=>{if(touched||e.target.closest('.player,.gear,.panel'))return;play()},{once:false});
+$('#vol').oninput=e=>{aud.volume=+e.target.value};
+addEventListener('pointerdown',e=>{if(touched||e.target.closest('.player'))return;play()});
 const fi=$('#file');
-$('#upBtn').onclick=$('#aBtn').onclick=()=>fi.click();
+$('#upBtn').onclick=()=>fi.click();
 fi.onchange=()=>{const fl=fi.files[0];if(!fl)return;
-  if(playing)pause();custom=true;aud.src=URL.createObjectURL(fl);$('#trk').textContent=fl.name;$('#trk').title=fl.name;play()};
-$('#aReset').onclick=()=>{if(playing)pause();custom=false;aud.removeAttribute('src');$('#trk').textContent='Mantecado de coco';play()};
+  aud.src=URL.createObjectURL(fl);$('#trk').textContent=fl.name;$('#trk').title=fl.name;play()};
 </script>
 </body>
 </html>
